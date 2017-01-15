@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 
 static HttpClient client = null;
-
+//Add comment to test sync from github to azure
  public static void Run(TimerInfo myTimer, TraceWriter log)
  {
     string meetupBaseUrl = "https://api.meetup.com/self/calendar";
