@@ -137,7 +137,7 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
     {
         log.Info(response.ToString());
     }
-    //log.Info("1.5");
+    //log.Info("1.5"); //Adding comment to test integration with azure
 
     return null;
 }
