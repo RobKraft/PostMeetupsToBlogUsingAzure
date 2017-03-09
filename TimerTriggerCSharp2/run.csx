@@ -3,16 +3,15 @@
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using System.Threading.Tasks;
-//just a comment
 using System; 
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 
 static HttpClient client = null;
-//Add comment to test sync from github to azure
- public static void Run(TimerInfo myTimer, TraceWriter log)
- {
+public static void Run(TimerInfo myTimer, TraceWriter log)
+{
+    ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
     string meetupBaseUrl = "https://api.meetup.com/self/calendar";
     client = new HttpClient();
     client.BaseAddress = new Uri(meetupBaseUrl);
@@ -34,7 +33,17 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
     log.Info("1.1");
     Newtonsoft.Json.Linq.JArray temp = null;
     
-    HttpResponseMessage response = await client.GetAsync(path);
+        HttpResponseMessage response = null;
+	try
+	{
+		response = await client.GetAsync(path);
+	}
+	catch (Exception ex2)
+	{
+		log.Info(ex2.ToString());
+	}
+	log.Info(response.StatusCode.ToString());
+	
     if (response.IsSuccessStatusCode)
     {
         log.Info(response.StatusCode.ToString());
