@@ -33,7 +33,7 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
     log.Info("1.1");
     Newtonsoft.Json.Linq.JArray temp = null;
     
-        HttpResponseMessage response = null;
+    HttpResponseMessage response = null;
 	try
 	{
 		response = await client.GetAsync(path);
