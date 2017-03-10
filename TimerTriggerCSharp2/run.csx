@@ -60,7 +60,10 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
 			string thisEventTimeFull = eventProperties.FirstOrDefault(x => x.Name == "time").Value.ToString();
 			int thisEventDateTimeUTC = int.Parse(thisEventTimeFull.Substring(0,10)); //strip off milliseconds
 			var date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-			DateTime thisEventDateTime = date.AddSeconds(thisEventDateTimeUTC).ToLocalTime();
+		    TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
+			DateTime thisEventDateTime = date.AddSeconds(thisEventDateTimeUTC);
+            thisEventDateTime = TimeZoneInfo.ConvertTimeFromUtc(thisEventDateTime, cstZone);
+		
 			string thisEventDate = thisEventDateTime.ToString("MMMM d");
             int diff = (thisEventDateTime - DateTime.Now.Date).Days;
             if ( (diff == 2) || (diff == 5) || (diff == 10) || (diff == 20))
