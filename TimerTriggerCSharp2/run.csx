@@ -151,7 +151,7 @@ countSent++;
         log.Info(response.ToString());
     }
     //log.Info("1.5"); 
-log.Info(countSent.ToString());
+log.Info("Number of Blog Posts Sent = " + countSent.ToString());
     return null;
 }
 private static string GetValue(Newtonsoft.Json.Linq.IJEnumerable<Newtonsoft.Json.Linq.JProperty> group, string fieldName)
