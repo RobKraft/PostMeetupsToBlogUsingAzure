@@ -29,6 +29,7 @@ public static void Run(TimerInfo myTimer, TraceWriter log)
 }
 static async Task<string> GetProductAsync(TraceWriter log, string path )
 {
+	int countSent = 0;
     string product = null;
     log.Info("1.1");
     Newtonsoft.Json.Linq.JArray temp = null;
@@ -54,10 +55,10 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
         
         foreach(var item in temp.Children())
         {
-			var eventProperties = item.Children<Newtonsoft.Json.Linq.JProperty>();
+		var eventProperties = item.Children<Newtonsoft.Json.Linq.JProperty>();
 			
             //Get the event date time and figure out if we want to post based on the number of days until event
-			string thisEventTimeFull = eventProperties.FirstOrDefault(x => x.Name == "time").Value.ToString();
+		string thisEventTimeFull = eventProperties.FirstOrDefault(x => x.Name == "time").Value.ToString();
 			int thisEventDateTimeUTC = int.Parse(thisEventTimeFull.Substring(0,10)); //strip off milliseconds
 			var date = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
 		    TimeZoneInfo cstZone = TimeZoneInfo.FindSystemTimeZoneById("Central Standard Time");
@@ -134,7 +135,7 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
                 //log.Info(apiKey.ToString()); 
                 dynamic sg = new SendGridAPIClient(apiKey);
                 dynamic response2 = await sg.client.mail.send.post(requestBody: mailMsg.Get());
-
+countSent++;		
                 log.Info(response2.StatusCode.ToString());
                 log.Info(response2.Body.ReadAsStringAsync().Result.ToString()); 
                 //log.Info(response2.Headers.ToString());
@@ -150,7 +151,7 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
         log.Info(response.ToString());
     }
     //log.Info("1.5"); 
-
+log.Info(countSent);
     return null;
 }
 private static string GetValue(Newtonsoft.Json.Linq.IJEnumerable<Newtonsoft.Json.Linq.JProperty> group, string fieldName)
