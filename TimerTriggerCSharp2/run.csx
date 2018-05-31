@@ -52,7 +52,8 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
         //log.Info(product.ToString());
         temp = Newtonsoft.Json.Linq.JArray.Parse(product);
 
-        
+        int seq = 0;
+	    
         foreach(var item in temp.Children())
         {
 		var eventProperties = item.Children<Newtonsoft.Json.Linq.JProperty>();
@@ -128,8 +129,12 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
             //log.Info(emailTo.Address); 
 			var emailMessageContent = new Content("text/html", body); 
 			Mail mailMsg = new Mail(emailFrom, emailSubject, emailTo, emailMessageContent);
-
+		
+		var ts = ((DateTimeOffset)DateTime.UtcNow.AddMinutes(seq*30)).ToUnixTimeSeconds();
+		seq++;
+		mailMsg.SendAt = ts;
             try
+		    
             {
                 string apiKey = Environment.GetEnvironmentVariable("AzureWebJobsSendGridApiKey");
                 //log.Info(apiKey.ToString()); 
