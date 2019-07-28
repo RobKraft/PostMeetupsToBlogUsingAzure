@@ -7,6 +7,9 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Collections.Specialized;
+using System.Text;
+using Newtonsoft.Json.Linq;
 
 static HttpClient client = null;
 public static void Run(TimerInfo myTimer, TraceWriter log)
@@ -17,13 +20,15 @@ public static void Run(TimerInfo myTimer, TraceWriter log)
     client.BaseAddress = new Uri(meetupBaseUrl);
     client.DefaultRequestHeaders.Accept.Clear();
     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-    string apiCommand ="";   
+    //string apiCommand ="";   
     string numberOfEvents="30";
-    string sigInfo = Environment.GetEnvironmentVariable("siginfo");
-    apiCommand = "?photo-host=public&page=" + numberOfEvents + sigInfo;
+    //string sigInfo = Environment.GetEnvironmentVariable("siginfo");
+    //apiCommand = "?photo-host=public&page=" + numberOfEvents + sigInfo;
     //log.Info(apiCommand);
     //log.Info("1");
-    Task<string> product = GetProductAsync(log, apiCommand);
+    string token = GetNewOAuth20Token();
+    string queryParams = "?access_token=" + token + "&photo-host=public&page=" + numberOfEvents;
+    Task<string> product = GetProductAsync(log, queryParams);
     //log.Info("2");
        
 }
@@ -170,4 +175,24 @@ private static string GetValue(Newtonsoft.Json.Linq.IJEnumerable<Newtonsoft.Json
 			value = itemValue.ToString();
 	}
 	return value;
+}
+private static string GetNewOAuth20Token()
+{
+    string token = "";
+    using (var wb = new WebClient())
+    {
+        var data = new NameValueCollection();
+        data["refresh_token"] = Environment.GetEnvironmentVariable("refresh_token");
+        data["grant_type"] = "refresh_token";
+        data["client_id"] = Environment.GetEnvironmentVariable("client_id");
+        data["client_secret"] = Environment.GetEnvironmentVariable("client_secret");
+        //data["redirect_uri"] = $"https://www.kansascityusergroups.com";
+
+        var response = wb.UploadValues($"https://secure.meetup.com/oauth2/access", "POST", data);
+
+        var responseString = Encoding.ASCII.GetString(response);
+        dynamic tokenResponse = JObject.Parse(responseString);
+        token = tokenResponse.access_token;
+    }
+    return token;
 }
