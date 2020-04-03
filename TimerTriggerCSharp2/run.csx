@@ -97,7 +97,7 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
 			log.Info(eventGroupName);
             
             //Need to hand case where the venue may not be provided yet, which is often the case
-            string eventVenueName=""; string address=""; string city=""; string state="";
+            string eventVenueName=""; //string address=""; string city=""; string state="";
             var eventVenueInfoProp = eventProperties.FirstOrDefault(x => x.Name == "venue");
             if (eventVenueInfoProp != null)
             {
@@ -109,9 +109,9 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
                     //log.Info(eventVenueProperties.ToString());
                     eventVenueName = eventVenueProperties.FirstOrDefault(x => x.Name == "name").Value.ToString();
                     //log.Info(eventVenueName);
-                    address = GetValue(eventVenueProperties, "address_1");
-                    city = GetValue(eventVenueProperties,"city");
-                    state = GetValue(eventVenueProperties, "state");
+                    //address = GetValue(eventVenueProperties, "address_1");
+                    //city = GetValue(eventVenueProperties,"city");
+                    //state = GetValue(eventVenueProperties, "state");
                 }
             }
 
@@ -121,11 +121,14 @@ static async Task<string> GetProductAsync(TraceWriter log, string path )
             log.Info(emailSubject);
 			string body = thisEventDateTime.ToLongDateString() + " at " + thisEventDateTime.ToLongTimeString() + Environment.NewLine;
 			body += Environment.NewLine + eventVenueName + Environment.NewLine;
-			body += Environment.NewLine + address + ", " + city + ", " + state;
+			//body += Environment.NewLine + address + ", " + city + ", " + state;
 			body += Environment.NewLine + Environment.NewLine + description + Environment.NewLine;
 			body += Environment.NewLine + howtofind;
             body += Environment.NewLine;
             body += Environment.NewLine + "<a href=\"" + eventLinkURL +"\">" + "Click here for event" + "</a>";
+  		body += Environment.NewLine;
+            string phoneapp = "https://kansascityusergroups.glideapp.io/";
+            body += Environment.NewLine + "<p><a href=\"" + phoneapp +"\">" + "View in KCUG Phone App" + "</a></p>";
   
 
             Email emailFrom = new Email(Environment.GetEnvironmentVariable("EmailFrom"));
